@@ -5,7 +5,8 @@ import subprocess
 if __name__ == '__main__':
 
     cmd = "ps +nc axo pid,stat,command |egrep -e 'somebot.py$'"
-    #cmd = "ps axo pid,stat,command |egrep -e 'somebot.py$'"    #just in case if there is no CW
+    # just in case if there is no CW
+    # cmd = "ps axo pid,stat,command |egrep -e 'somebot.py$'"
     PIPE = subprocess.PIPE
 
     p = subprocess.Popen(cmd, shell=True, stdout=PIPE, universal_newlines=True)
@@ -15,11 +16,11 @@ if __name__ == '__main__':
         print(tmp)
         print(len(tmp))
         print(tmp[1][0])
-        #print(ret.split(' ')[2])
+        # print(ret.split(' ')[2])
 
-    #subprocess.Popen("./somebot.py", shell=True, start_new_session=True)
+    # subprocess.Popen("./somebot.py", shell=True, start_new_session=True)
 
-    #print('main process works')
-    #for i in range(4):
-        #time.sleep(2)
-    #print('main process ends')
+    # print('main process works')
+    # for i in range(4):
+        # time.sleep(2)
+    # print('main process ends')
