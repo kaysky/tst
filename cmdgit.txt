@@ -1,0 +1,11 @@
+git commit -m "comit string"
+git commit -a -m 'added new benchmarks'
+
+
+git clone <rep> <dir>
+
+git add <file_name>
+
+git commit -m "new file added or changed"
+##or
+git commit -m -a "same as before but without call of git add <> "
