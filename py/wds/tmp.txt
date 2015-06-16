@@ -1,0 +1,1 @@
+14890 pts/5    S+     0:00 python3 ./somebot.py

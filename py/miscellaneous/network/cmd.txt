@@ -1,0 +1,1 @@
+pyuic4 -x form.ui -o form_ui.py
