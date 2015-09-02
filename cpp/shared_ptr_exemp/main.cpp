@@ -14,7 +14,7 @@ class A
 		A() :a(new int(0) ) { std::cout << "A constructor" << std::endl; }
 		// пользовательский конструктор копирования увеличивает счетчик ссылок  только если явно вызвать конструктор копирования локального обьекта
 		// конструктор по умолчанию тоже увеличивает счетчик ссылок
-		A(const A& ob)   :a(ob.a)  /* Если убрать инициализацию произойдет удаление указателя и ошибка обращения к памяти */
+		A(const A& ob) :a(ob.a)/* Если убрать инициализацию произойдет удаление указателя и ошибка обращения к памяти */
 		{
 			std::cout << "copy A constructor" << std::endl;
 		}
@@ -37,17 +37,19 @@ void fun_change(A a)
 	a.set(20);
 }
 
+
 int main(int argc, char *argv[])
 {
 	std::cout << "test smart ptr programm" << std::endl;
 	boost::shared_ptr<A> pa(new A);
 	A a;
-	A* ap= &a;
 	a.set(10);
 
 	std::cout << "a = " << a.get() << std::endl;
 	fun_change(a);
 	std::cout << "a = " << a.get() << std::endl;
+
+	std::cout << "pa count:" << pa.use_count() << std::endl;
 
 	//a(NULL)->get();
 	std::cout << "end of the test" << std::endl;

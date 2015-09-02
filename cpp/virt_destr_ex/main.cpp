@@ -33,10 +33,19 @@ public:
     }
 };
 
+class A :public child
+{
+	public:
+		A() { std::cout << "A constructor" << std::endl; }
+		~A() { std::cout << "A destructor" << std::endl; }
+};
+
 int main()
 {
     cout << "base pointer:" << endl;
     base *pb = new child();
+    delete pb;
+    pb = new A();
     delete pb;
     cout << "objects" << endl;
     child ob = child();
