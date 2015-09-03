@@ -53,10 +53,10 @@ int main(int argc, char *argv[])
 
 	string sLine = "";
 	ifstream in;
-	fstream out;
+	ofstream out;
 	multiset<string> ls;
 
-	out.open(cmd_line[2], fstream::out);
+	out.open(cmd_line[2]); //fstream::out)
 	in.open(cmd_line[1]);
 
 	while(!in.eof())
