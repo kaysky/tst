@@ -1,43 +1,8 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <set>
-#include <vector>
-#include <iterator>
-#include <algorithm>
+
+#include "helpers.hpp"
+
 using namespace std;
-
-void show_usage(char *arg[])
-{
-	std::cout << "USAGE of the " << arg[0] << ":"  << std::endl;
-	std::cout << arg[0]  << " --help or -h show this message" << std::endl;
-	cout << arg[0] << " <inputFile>  <outputFile>  [memsize]  sorts input file to output one" << endl;
-}
-
-bool parse_cmd(int argc, char *arg[], vector<string> &cmd_line)
-{
-	if(argc < 2 || argc > 4)
-	{
-		show_usage(arg);
-		return false;
-	}
-
-	for(int i = 0; i < argc; ++i)
-	{
-		cmd_line.push_back(arg[i]);
-	}
-
-	if(cmd_line[1] == "--help" || cmd_line[1] == "-h")
-	{
-		show_usage(arg);
-		return false;
-	}
-
-	if(cmd_line[1].empty() && cmd_line[2].empty())
-		return false;
-	else
-		return true;
-}
+using namespace kki;
 
 
 int main(int argc, char *argv[])
