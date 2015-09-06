@@ -1,2 +1,2 @@
 all:
-	g++ main.cpp helpers.cpp -o ttt -std=c++11
+	g++ main.cpp helpers.cpp -o sort2out -std=c++11
