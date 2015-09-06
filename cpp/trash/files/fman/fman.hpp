@@ -11,6 +11,8 @@
 #include <memory>
 #include <vector>
 #include <cstdio>
+#include <algorithm>
+
 
 namespace kki
 {
@@ -51,8 +53,9 @@ public:
 	void sort_case(way );
 	void direct_sort();
 	void show_free_mem();
+	void merge2files();
 	void split2tmp();
-	void merge4tmp();
+	void mergeFromtmp();
 };
 
 

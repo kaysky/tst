@@ -95,12 +95,25 @@ namespace kki
 		}
 		in.close();
 		int mem(0);
-		std::string::size_type sz;
+//		std::string::size_type sz;
 		//mem = std::stoi(ramInf[1],&sz);
 		std::cout 	<< "free mem is:"
 					<< mem
 					<< " Gb"
 					<< std::endl;
+	}
+
+	void FMan::merge2files()
+	{
+		std::ifstream in1("a.test");
+		std::ifstream in2("b.test");
+		std::ofstream out("ab.test");
+		std::merge( std::istream_iterator<std::string>(in1)
+				  , std::istream_iterator<std::string>()
+				  , std::istream_iterator<std::string>(in2)
+				  , std::istream_iterator<std::string>()
+				  , std::ostream_iterator<std::string>(out,"\n")
+				  );
 	}
 
 	void FMan::split2tmp()
@@ -129,9 +142,10 @@ namespace kki
 		}
 	}
 
-
-	void FMan::merge4tmp()
+	void FMan::mergeFromtmp()
 	{
+		std::ifstream in;
+		std::ofstream out(outfile.c_str());
 		
 	}
 

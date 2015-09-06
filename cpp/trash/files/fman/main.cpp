@@ -13,6 +13,7 @@ int main(int argc, char *argv[])
 
 	fman.direct_sort();
 	fman.show_free_mem();
+	fman.merge2files();
 
 
 	std::cout << "End of the test." << std::endl;
