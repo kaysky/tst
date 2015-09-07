@@ -11,10 +11,10 @@ int main(int argc, char *argv[])
 {
 	std::cout << "FMAN test:" << std::endl;
 
-	FMan fman("in.tmp","out.tmp");
+	FMan fman("test.in","out.tmp");
 	randFile file("test.in",1000000);
 
-	file.gnFile();
+//	file.gnFile();
 //	file.readFile();
 //	fman.direct_sort();
 	std::cout << fman.detect_free_ram() << endl;
