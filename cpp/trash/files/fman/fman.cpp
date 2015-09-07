@@ -12,23 +12,6 @@ namespace kki
 		out.close();
 	}
 
-	void FMan::testCopyFile()
-	{
-		std::ifstream in(infile.c_str());
-		std::ofstream out(outfile.c_str());
-		if(in.is_open())
-		{
-			if(out.is_open())
-			{
-				std::copy( std::istream_iterator<std::string>(in)
-						 , std::istream_iterator<std::string>()
-						 , std::ostream_iterator<std::string>(out,"\n"));
-			}
-		}
-		in.close();
-		out.close();
-	}
-
 
 	void TempFileGenerator::delFlist()
 	{
@@ -49,7 +32,7 @@ namespace kki
 
 			case split:
 			{
-
+				indirect_sort();
 			}
 
 			default:
@@ -61,80 +44,102 @@ namespace kki
 
 	void FMan::direct_sort()
 	{
-		std::string str("");
-		std::ifstream in(infile.c_str());
-		std::ofstream out(outfile.c_str());
-		if(in.is_open())
+		if(detect_file_size() < detect_free_ram())
 		{
-			while(!in.eof())
+			std::string str("");
+			std::ifstream in(infile);
+			std::ofstream out(outfile);
+			if(in.is_open())
 			{
-				std::getline(in,str);
-				buff.insert(str);
-			}
+				while(!in.eof())
+				{
+					std::getline(in,str);
+					buff.insert(str);
+				}
 
-			if(out.is_open())
-				if(!buff.empty())
-					copy( buff.begin()
-						, buff.end()
-						, std::ostream_iterator<std::string>(out,"\n")
-						);
+				if(out.is_open())
+					if(!buff.empty())
+						copy( buff.begin()
+							, buff.end()
+							, std::ostream_iterator<std::string>(out,"\n")
+							);
+			}
+		}
+		else
+		{
+			indirect_sort();
 		}
 	}
 
-	void FMan::show_free_mem()
+
+	void FMan::indirect_sort()
+	{
+		//take mem info and some prediction
+		split2tmp();
+		mergeTmpFiles();
+		uFgen->delFlist();
+	}
+
+
+	unsigned int FMan::detect_free_ram()
 	{
 		std::string tmp("");
 		std::ifstream in("/proc/meminfo");
+		std::istringstream iss;
 		std::vector<std::string> ramInf;
 		while(!in.eof())
 		{
 			std::getline(in,tmp);
-			ramInf.push_back(tmp);
-			std::cout << tmp << std::endl;
-			if(!tmp.find("MemFree")) break;
+			if(!tmp.find("MemFree"))
+			{
+				//ramInf.push_back(tmp);
+				iss.str(tmp);
+				copy( std::istream_iterator<std::string>(iss)
+					, std::istream_iterator<std::string>()
+					, std::back_inserter(ramInf)
+					);
+				std::cout << tmp << std::endl;
+				std::cout << "size of free mem in Kb :" << ramInf[1] << std::endl;
+				break;
+			}
 		}
 		in.close();
-		int mem(0);
-//		std::string::size_type sz;
-		//mem = std::stoi(ramInf[1],&sz);
-		std::cout 	<< "free mem is:"
-					<< mem
-					<< " Gb"
-					<< std::endl;
+		int val = std::stoi(ramInf[1]);
+		return val;
 	}
 
-	void FMan::merge2files()
+	unsigned int FMan::detect_file_size()
 	{
-		std::ifstream in1("a.test");
-		std::ifstream in2("b.test");
-		std::ofstream out("ab.test");
-		std::merge( std::istream_iterator<std::string>(in1)
-				  , std::istream_iterator<std::string>()
-				  , std::istream_iterator<std::string>(in2)
-				  , std::istream_iterator<std::string>()
-				  , std::ostream_iterator<std::string>(out,"\n")
-				  );
+		std::ifstream file(infile, std::ios::binary | std::ios::ate);
+		int val = file.tellg();
+		file.close();
+		return val;
 	}
+
 
 	void FMan::split2tmp()
 	{
 		std::ifstream in(infile);
 		std::string tmp("");
-		int qmem = 0;
-		int QmemAllowed = 200; //Mb
+		std::string name("");
+		int idx(0);
+		int qmem(0);
+		int QmemAllowed = detect_free_ram() * 0.8;
 		if(in.is_open())
 		{
 			while(!in.eof())
 			{
+				qmem += tmp.size();
 				if(qmem <= QmemAllowed)
 				{
 					std::getline(in,tmp);
-					qmem += tmp.size();
 					buff.insert(tmp);
 				}
 				else
 				{
-					uFgen->addFile("newfilename.tmp",buff);
+					idx += 1;
+					name = std::to_string(idx) + ".tmp";
+					uFgen->addFile(name,buff);
 					buff.clear();
 					qmem = 0;
 				}
@@ -142,11 +147,46 @@ namespace kki
 		}
 	}
 
-	void FMan::mergeFromtmp()
+	void FMan::mergeTmpFiles()
 	{
-		std::ifstream in;
-		std::ofstream out(outfile.c_str());
-		
+		std::fstream tmp;
+		std::ifstream ifs;
+		std::fstream out;
+
+		for(const auto& it :uFgen->getFlist())
+		{
+			tmp.open("t0.tmp",std::fstream::out);
+			out.open(outfile,std::fstream::in);
+
+			if(tmp.is_open() && out.is_open())
+			{
+				std::copy( std::istream_iterator<std::string>(out)
+						 , std::istream_iterator<std::string>()
+						 , std::ostream_iterator<std::string>(tmp,"\n"));
+			}
+			tmp.close();
+			out.close();
+
+			tmp.open("t0.tmp",std::fstream::in);
+			ifs.open(it);
+			out.open(outfile,std::fstream::out);
+
+			if(	tmp.is_open()
+					&&
+				out.is_open()
+					&&
+				ifs.is_open()
+			  )
+				std::merge( std::istream_iterator<std::string>(tmp)
+						  , std::istream_iterator<std::string>()
+						  , std::istream_iterator<std::string>(ifs)
+						  , std::istream_iterator<std::string>()
+						  , std::ostream_iterator<std::string>(out,"\n")
+						  );
+			tmp.close();
+			ifs.close();
+			out.close();
+		}
 	}
 
 };

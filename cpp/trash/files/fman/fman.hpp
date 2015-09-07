@@ -12,7 +12,7 @@
 #include <vector>
 #include <cstdio>
 #include <algorithm>
-
+#include <sstream>
 
 namespace kki
 {
@@ -49,13 +49,16 @@ public:
 	{}
 	~FMan() {}
 
-	void testCopyFile();
 	void sort_case(way );
 	void direct_sort();
-	void show_free_mem();
-	void merge2files();
+	void indirect_sort();
+	unsigned int detect_free_ram();
+	unsigned int detect_file_size();
 	void split2tmp();
-	void mergeFromtmp();
+	void mergeTmpFiles();
+
+	void testCopyFile();
+	void merge2files();
 };
 
 

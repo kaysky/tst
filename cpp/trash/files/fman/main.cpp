@@ -11,9 +11,10 @@ int main(int argc, char *argv[])
 
 	FMan fman("in.tmp","out.tmp");
 
-	fman.direct_sort();
-	fman.show_free_mem();
-	fman.merge2files();
+//	fman.direct_sort();
+	std::cout << fman.detect_free_ram() << endl;
+	std::cout << fman.detect_file_size() << std::endl;
+//	fman.merge2files();
 
 
 	std::cout << "End of the test." << std::endl;
