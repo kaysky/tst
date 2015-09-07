@@ -11,7 +11,7 @@ class base
 public:
 	base() {}
 	virtual ~base() {}
-
+	//static virtual void f1() {} // can't be static and virtual
 	virtual void fun() = 0;
 };
 
