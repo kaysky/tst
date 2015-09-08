@@ -105,6 +105,11 @@ namespace kki
 		}
 		in.close();
 		int val = std::stoi(ramInf[1]);
+		if(ramInf[2] == "kB")
+		{
+			std::cout << ramInf[2]  << std::endl;
+			val *= 1000;
+		}
 		return val;
 	}
 
@@ -117,6 +122,9 @@ namespace kki
 	}
 
 
+	//to do one big file devide to severel small files
+	//which can be sorted internally
+	//check size of the file and allowed memram for sorting
 	void FMan::split2tmp()
 	{
 		std::ifstream in(infile);
@@ -145,6 +153,52 @@ namespace kki
 				}
 			}
 		}
+	}
+
+
+	void FMan::in2out()
+	{
+		std::ifstream in(infile);
+		std::string tmp;
+		std::ofstream out1("out1.tmp");
+		std::ofstream out2("out2.tmp");
+
+		unsigned int len = 0; /*  detect_file_size() / 2;*/
+
+		if(in.is_open())
+		{
+//			if(out.is_open())
+//			{
+//				std::copy( std::istream_iterator<std::string>(in)
+//						 , std::istream_iterator<std::string>()
+//						 , std::ostream_iterator<std::string>(out,"\n"));
+//			}
+			while(!in.eof())
+			{
+				getline(in,tmp);
+				++len;
+				if(len%2)
+					out1 << tmp << std::endl;
+				else
+					out2 << tmp << std::endl;
+			}
+		}
+		in.close();
+		out1.close();
+		out2.close();
+	}
+
+	void FMan::merge2files()
+	{
+		std::ifstream in1("out1.tmp");
+		std::ifstream in2("out2.tmp");
+		std::ofstream out("sortOut.tmp");
+		std::merge( std::istream_iterator<std::string>(in1)
+				  , std::istream_iterator<std::string>()
+				  , std::istream_iterator<std::string>(in2)
+				  , std::istream_iterator<std::string>()
+				  , std::ostream_iterator<std::string>(out,"\n")
+				  );
 	}
 
 	void FMan::mergeTmpFiles()

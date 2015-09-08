@@ -50,7 +50,7 @@ public:
 			{
 				for(int i = 0; i < len; ++i)
 				{
-					tmp += randStr[rand() % 90];
+					tmp += randStr[rand() % 70];
 				}
 				out << tmp << std::endl;
 				tmp = "";
@@ -60,10 +60,9 @@ public:
 };
 
 const char randFile::randStr[]{
-					   	"abcdefghigklmnopqrstuvwxyz"
+					   	"abcdghigklmnpqrstuvwxyz"
 					  	"0 1 2 3 4 5 6 7 8 9 "
-					  	"~!@#$%^&*(){}[]:<>?|/"
-					  	"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+					  	"ABCDGHIJKLMNPQRSTUVWXYZ"
 					 	};
 };
 

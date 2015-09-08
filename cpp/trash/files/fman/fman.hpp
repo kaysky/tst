@@ -55,6 +55,8 @@ public:
 	unsigned int detect_free_ram();
 	unsigned int detect_file_size();
 	void split2tmp();
+	void split2double();
+	void in2out();
 	void mergeTmpFiles();
 
 	void testCopyFile();
