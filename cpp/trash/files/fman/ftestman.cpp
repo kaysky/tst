@@ -40,7 +40,7 @@ namespace kki
 //		std::string fname1("1.temp");
 //		std::string fname2("2.temp");
 		std::string tmp("");
-		unsigned int in_file_size = detect_file_size();
+		unsigned int in_file_size = detect_file_size(infile);
 		unsigned int ram_size = detect_free_ram();
 		unsigned int half = in_file_size/2;
 		char *bf = NULL;

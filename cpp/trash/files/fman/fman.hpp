@@ -28,9 +28,11 @@ class TempFileGenerator
 public:
 	TempFileGenerator() {}
 	~TempFileGenerator() {}
-	void addFile(const std::string &, RAMBuff &);
+	void addSortedFile(const std::string &, RAMBuff &);
+	void addFileName(std::string &name) { fnames.push_back(name); }
 	FileNames& getFlist() { return fnames;  }
 	void delFlist();
+	void delFile(const std::string&);
 };
 
 
@@ -40,12 +42,14 @@ class FMan
 	std::string infile;
 	std::string outfile;
 	enum way {direct,split};
+	unsigned int user_ram_limitation;
 public:
 	RAMBuff buff;
-	FMan(std::string fin, std::string fout)
+	FMan(std::string fin, std::string fout, unsigned int limit)
 		: uFgen(new TempFileGenerator)
 		, infile(fin)
 		, outfile(fout)
+		, user_ram_limitation(limit)
 	{}
 	~FMan() {}
 
@@ -53,10 +57,10 @@ public:
 	void direct_sort();
 	void indirect_sort();
 	unsigned int detect_free_ram();
-	unsigned int detect_file_size();
+	unsigned int detect_file_size(const std::string &name);
 	void split2tmp();
 	void split2double();
-	void in2out();
+	void in2out(const std::string &, const std::string &);
 	void mergeTmpFiles();
 
 	void testCopyFile();

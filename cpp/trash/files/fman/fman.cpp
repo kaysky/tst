@@ -3,7 +3,7 @@
 namespace kki
 {
 
-	void TempFileGenerator::addFile(const std::string &fname, RAMBuff &rambuff)
+	void TempFileGenerator::addSortedFile(const std::string &fname, RAMBuff &rambuff)
 	{
 		std::ofstream out(fname);
 		if(out.is_open()) fnames.push_back(fname);
@@ -12,6 +12,11 @@ namespace kki
 		out.close();
 	}
 
+	void TempFileGenerator::delFile(const std::string & name)
+	{
+		std::remove(name.c_str());
+//		fnames.remove(name);
+	}
 
 	void TempFileGenerator::delFlist()
 	{
@@ -44,7 +49,7 @@ namespace kki
 
 	void FMan::direct_sort()
 	{
-		if(detect_file_size() < detect_free_ram())
+		if(detect_file_size(infile) < detect_free_ram())
 		{
 			std::string str("");
 			std::ifstream in(infile);
@@ -113,11 +118,13 @@ namespace kki
 		return val;
 	}
 
-	unsigned int FMan::detect_file_size()
+	unsigned int FMan::detect_file_size(const std::string &name)
 	{
-		std::ifstream file(infile, std::ios::binary | std::ios::ate);
-		int val = file.tellg();
+		std::ifstream file(name, std::ios::binary | std::ios::ate);
+		int val(-1);
+		if (file.is_open()) val = file.tellg();
 		file.close();
+		std::cout << "size of " << name << " is :" << val << std::endl;
 		return val;
 	}
 
@@ -127,52 +134,42 @@ namespace kki
 	//check size of the file and allowed memram for sorting
 	void FMan::split2tmp()
 	{
-		std::ifstream in(infile);
-		std::string tmp("");
-		std::string name("");
 		int idx(0);
-		int qmem(0);
-		int QmemAllowed = detect_free_ram() * 0.8;
-		if(in.is_open())
+		std::string ofName("out");
+		unsigned int sys_free_ram = detect_free_ram();
+		unsigned int buff_size = user_ram_limitation < sys_free_ram
+													 ? user_ram_limitation
+													 : sys_free_ram * 0.8;
+		std::cout << "buf_size is :" << buff_size << std::endl;
+		//int user_limit_ram = user_ram_limitation;
+		in2out(infile,ofName);
+		for(const auto& e :uFgen->getFlist())
 		{
-			while(!in.eof())
-			{
-				qmem += tmp.size();
-				if(qmem <= QmemAllowed)
-				{
-					std::getline(in,tmp);
-					buff.insert(tmp);
-				}
-				else
-				{
-					idx += 1;
-					name = std::to_string(idx) + ".tmp";
-					uFgen->addFile(name,buff);
-					buff.clear();
-					qmem = 0;
-				}
-			}
+			if(detect_file_size(e) < buff_size)
+				continue;
+			++idx;
+			//ofName += "L" + std::to_string(idx);
+			in2out(e,ofName + std::to_string(idx));
 		}
 	}
 
 
-	void FMan::in2out()
+	void FMan::in2out(const std::string &inName, const std::string &outName)
 	{
-		std::ifstream in(infile);
 		std::string tmp;
-		std::ofstream out1("out1.tmp");
-		std::ofstream out2("out2.tmp");
-
-		unsigned int len = 0; /*  detect_file_size() / 2;*/
-
-		if(in.is_open())
+		std::string oname1 = outName + "1.tmp";
+		std::string oname2 = outName + "2.tmp";
+		std::ifstream in(inName);
+		std::ofstream out1(oname1);
+		std::ofstream out2(oname2);
+		int len(0);
+		if(in.is_open()
+			&& out1.is_open()
+			&& out2.is_open()
+		  )
 		{
-//			if(out.is_open())
-//			{
-//				std::copy( std::istream_iterator<std::string>(in)
-//						 , std::istream_iterator<std::string>()
-//						 , std::ostream_iterator<std::string>(out,"\n"));
-//			}
+			uFgen->addFileName(oname1);
+			uFgen->addFileName(oname2);
 			while(!in.eof())
 			{
 				getline(in,tmp);
@@ -183,9 +180,15 @@ namespace kki
 					out2 << tmp << std::endl;
 			}
 		}
+		else
+			std::cout << "ERR of open!!!" << std::endl;
 		in.close();
 		out1.close();
 		out2.close();
+		if(inName != infile)
+		{
+			uFgen->delFile(inName);
+		}
 	}
 
 	void FMan::merge2files()
