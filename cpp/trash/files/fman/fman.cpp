@@ -3,24 +3,37 @@
 namespace kki
 {
 
-	void TempFileGenerator::addSortedFile(const std::string &fname, RAMBuff &rambuff)
+//void FileController::addSortedFile(const std::string &fname, RAMBuff &rambuff)
+//	{
+//		std::ofstream out(fname);
+//		if(out.is_open()) fnames.push_back(fname);
+//		std::ostream_iterator<std::string> out_it (out,"\n");
+//		std::copy (rambuff.begin(), rambuff.end(), out_it);
+//		out.close();
+//	}
+//
+	FileNames& FileController::getFlist()
 	{
-		std::ofstream out(fname);
-		if(out.is_open()) fnames.push_back(fname);
-		std::ostream_iterator<std::string> out_it (out,"\n");
-		std::copy (rambuff.begin(), rambuff.end(), out_it);
-		out.close();
+		if(!obsolet_names.empty())
+		{
+			for(const auto& e :obsolet_names)
+			{
+				fnames.remove(e);
+			}
+			obsolet_names.clear();
+		}
+		return fnames;
 	}
 
-	void TempFileGenerator::delFile(const std::string & name)
+	void FileController::delFile(const std::string & name)
 	{
 		std::remove(name.c_str());
-//		fnames.remove(name);
+		obsolet_names.push_back(name);
 	}
 
-	void TempFileGenerator::delFlist()
+	void FileController::delFlist()
 	{
-		for(const auto& e :fnames)
+		for(const auto& e :getFlist())
 		{
 			std::remove(e.c_str());
 		}
@@ -44,6 +57,38 @@ namespace kki
 			{
 
 			}
+		}
+	}
+
+	void FMan::sort_tmp()
+	{
+		std::ifstream in;
+		std::ofstream out;
+		std::string tmp("");
+		buff.clear();
+
+		//sort all tmp files
+		for(const auto& e :uFgen->getFlist())
+		{
+			in.open(e);
+			if(in.is_open())
+			{
+				while(!in.eof())
+				{
+					getline(in,tmp);
+					buff.insert(tmp);
+				}
+			}
+			in.close();
+
+			out.open(e);
+			if(out.is_open())
+				if(!buff.empty())
+					copy( buff.begin()
+						, buff.end()
+						, std::ostream_iterator<std::string>(out,"\n")
+						);
+			buff.clear();
 		}
 	}
 
@@ -129,9 +174,6 @@ namespace kki
 	}
 
 
-	//to do one big file devide to severel small files
-	//which can be sorted internally
-	//check size of the file and allowed memram for sorting
 	void FMan::split2tmp()
 	{
 		int idx(0);
@@ -148,7 +190,6 @@ namespace kki
 			if(detect_file_size(e) < buff_size)
 				continue;
 			++idx;
-			//ofName += "L" + std::to_string(idx);
 			in2out(e,ofName + std::to_string(idx));
 		}
 	}
@@ -191,58 +232,54 @@ namespace kki
 		}
 	}
 
-	void FMan::merge2files()
+	void FMan::merge2files( const std::string& inn1
+						  , const std::string& inn2
+						  , std::string& outt
+						  )
 	{
-		std::ifstream in1("out1.tmp");
-		std::ifstream in2("out2.tmp");
-		std::ofstream out("sortOut.tmp");
-		std::merge( std::istream_iterator<std::string>(in1)
-				  , std::istream_iterator<std::string>()
-				  , std::istream_iterator<std::string>(in2)
-				  , std::istream_iterator<std::string>()
-				  , std::ostream_iterator<std::string>(out,"\n")
-				  );
+		std::ifstream in1(inn1);
+		std::ifstream in2(inn2);
+		std::ofstream out(outt);
+
+		if(	in1.is_open()
+			&& in2.is_open()
+			&& out.is_open()
+		  )
+		{
+			std::merge( std::istream_iterator<std::string>(in1)
+					  , std::istream_iterator<std::string>()
+					  , std::istream_iterator<std::string>(in2)
+					  , std::istream_iterator<std::string>()
+					  , std::ostream_iterator<std::string>(out,"\n")
+					  );
+		}
+		uFgen->addFileName(outt);
+		uFgen->delFile(inn1);
+		uFgen->delFile(inn2);
+		std::cout	<< "add/del1/del2 :"
+					<< outt << "/"
+					<< inn1 << "/"
+					<< inn2  << std::endl;
 	}
 
 	void FMan::mergeTmpFiles()
 	{
-		std::fstream tmp;
-		std::ifstream ifs;
-		std::fstream out;
+		int idx(0);
+		std::string out_name("");
+		auto it1 = uFgen->getFlist().begin();
+		auto it2 = it1;
+		auto it_end = uFgen->getFlist().end();
 
-		for(const auto& it :uFgen->getFlist())
+		for ( it1, ++it2
+			; it2 != it_end
+			; ++it1, ++it2
+			)
 		{
-			tmp.open("t0.tmp",std::fstream::out);
-			out.open(outfile,std::fstream::in);
-
-			if(tmp.is_open() && out.is_open())
-			{
-				std::copy( std::istream_iterator<std::string>(out)
-						 , std::istream_iterator<std::string>()
-						 , std::ostream_iterator<std::string>(tmp,"\n"));
-			}
-			tmp.close();
-			out.close();
-
-			tmp.open("t0.tmp",std::fstream::in);
-			ifs.open(it);
-			out.open(outfile,std::fstream::out);
-
-			if(	tmp.is_open()
-					&&
-				out.is_open()
-					&&
-				ifs.is_open()
-			  )
-				std::merge( std::istream_iterator<std::string>(tmp)
-						  , std::istream_iterator<std::string>()
-						  , std::istream_iterator<std::string>(ifs)
-						  , std::istream_iterator<std::string>()
-						  , std::ostream_iterator<std::string>(out,"\n")
-						  );
-			tmp.close();
-			ifs.close();
-			out.close();
+			++idx;
+			out_name = "out" + std::to_string(idx) + ".tmp";
+			merge2files(*it1,*it2,out_name);
+			++it1;
+			++it2;
 		}
 	}
 

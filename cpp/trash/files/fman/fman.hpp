@@ -13,6 +13,7 @@
 #include <cstdio>
 #include <algorithm>
 #include <sstream>
+#include <utility>
 
 namespace kki
 {
@@ -21,16 +22,17 @@ namespace kki
 	typedef std::multiset<std::string> RAMBuff;
 
 
-class TempFileGenerator
+class FileController
 {
 	FileNames fnames;
-	TempFileGenerator(const TempFileGenerator&){}
+	FileNames obsolet_names;
+	FileController(const FileController&){}
 public:
-	TempFileGenerator() {}
-	~TempFileGenerator() {}
-	void addSortedFile(const std::string &, RAMBuff &);
+	FileController() {}
+	~FileController() {}
+//	void addSortedFile(const std::string &, RAMBuff &);
 	void addFileName(std::string &name) { fnames.push_back(name); }
-	FileNames& getFlist() { return fnames;  }
+	FileNames& getFlist();
 	void delFlist();
 	void delFile(const std::string&);
 };
@@ -38,7 +40,7 @@ public:
 
 class FMan
 {
-	std::unique_ptr<TempFileGenerator> uFgen;
+	std::unique_ptr<FileController> uFgen;
 	std::string infile;
 	std::string outfile;
 	enum way {direct,split};
@@ -46,14 +48,15 @@ class FMan
 public:
 	RAMBuff buff;
 	FMan(std::string fin, std::string fout, unsigned int limit)
-		: uFgen(new TempFileGenerator)
+		: uFgen(new FileController)
 		, infile(fin)
 		, outfile(fout)
 		, user_ram_limitation(limit)
 	{}
 	~FMan() {}
 
-	void sort_case(way );
+	void sort_case(way);
+	void sort_tmp();
 	void direct_sort();
 	void indirect_sort();
 	unsigned int detect_free_ram();
@@ -64,7 +67,10 @@ public:
 	void mergeTmpFiles();
 
 	void testCopyFile();
-	void merge2files();
+	void merge2files( const std::string&
+					, const std::string&
+					, std::string&
+					);
 };
 
 

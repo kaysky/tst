@@ -126,4 +126,63 @@ namespace kki
 */
 
 
+//	void FMan::mergeTmpFiles()
+//	{
+//		std::fstream tmp;
+//		std::ifstream ifs;
+//		std::fstream out;
+//
+//		for(const auto& it :uFgen->getFlist())
+//		{
+//			tmp.open("t0.tmp",std::fstream::out);
+//			out.open(outfile,std::fstream::in);
+//
+//			if(tmp.is_open() && out.is_open())
+//			{
+//				std::copy( std::istream_iterator<std::string>(out)
+//						 , std::istream_iterator<std::string>()
+//						 , std::ostream_iterator<std::string>(tmp,"\n"));
+//			}
+//			tmp.close();
+//			out.close();
+//
+//			tmp.open("t0.tmp",std::fstream::in);
+//			ifs.open(it);
+//			out.open(outfile,std::fstream::out);
+//
+//			if(	tmp.is_open()
+//					&&
+//				out.is_open()
+//					&&
+//				ifs.is_open()
+//			  )
+//				std::merge( std::istream_iterator<std::string>(tmp)
+//						  , std::istream_iterator<std::string>()
+//						  , std::istream_iterator<std::string>(ifs)
+//						  , std::istream_iterator<std::string>()
+//						  , std::ostream_iterator<std::string>(out,"\n")
+//						  );
+//			tmp.close();
+//			ifs.close();
+//			out.close();
+//		}
+//	}
+
+//list<int> ls;
+//
+//void funls()
+//{
+//	ls.push_back(0);
+//	ls.push_back(1);
+//	ls.push_back(2);
+//
+//	int i = 2;
+//	for(const auto& e :ls)
+//	{
+//		++i;
+//		std::cout << e << std::endl;
+//		if(i < 10) ls.push_back(i);
+//	}
+//}
+
 };
