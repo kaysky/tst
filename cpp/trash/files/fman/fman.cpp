@@ -83,11 +83,14 @@ namespace kki
 
 			out.open(e);
 			if(out.is_open())
+			{
+				std::cout << e << " is sorting to buff" << std::endl;
 				if(!buff.empty())
 					copy( buff.begin()
 						, buff.end()
 						, std::ostream_iterator<std::string>(out,"\n")
 						);
+			}
 			buff.clear();
 		}
 	}
