@@ -3,15 +3,6 @@
 namespace kki
 {
 
-//void FileController::addSortedFile(const std::string &fname, RAMBuff &rambuff)
-//	{
-//		std::ofstream out(fname);
-//		if(out.is_open()) fnames.push_back(fname);
-//		std::ostream_iterator<std::string> out_it (out,"\n");
-//		std::copy (rambuff.begin(), rambuff.end(), out_it);
-//		out.close();
-//	}
-//
 	FileNames& FileController::getFlist()
 	{
 		if(!obsolet_names.empty())
@@ -31,33 +22,15 @@ namespace kki
 		obsolet_names.push_back(name);
 	}
 
-	void FileController::delFlist()
+
+	void FMan::proceed_sort()
 	{
-		for(const auto& e :getFlist())
+		if(detect_file_size(infile) < user_ram_limitation)
 		{
-			std::remove(e.c_str());
+			direct_sort();
 		}
-	}
-
-	void FMan::sort_case(way ws)
-	{
-		switch(ws)
-		{
-			case direct:
-			{
-				direct_sort();
-			}
-
-			case split:
-			{
-				indirect_sort();
-			}
-
-			default:
-			{
-
-			}
-		}
+		else
+			indirect_sort();
 	}
 
 	void FMan::sort_tmp()
@@ -97,6 +70,7 @@ namespace kki
 
 	void FMan::direct_sort()
 	{
+		std::cout << "DIRECT SORT : ... " << std::endl;
 		if(detect_file_size(infile) < detect_free_ram())
 		{
 			std::string str("");
@@ -117,6 +91,7 @@ namespace kki
 							, std::ostream_iterator<std::string>(out,"\n")
 							);
 			}
+			std::cout << "DONE." << std::endl;
 		}
 		else
 		{
@@ -137,7 +112,7 @@ namespace kki
 	}
 
 
-	ULL_int FMan::detect_free_ram()
+	ULL_int FMan::detect_free_ram(float k/* = 0.8 */)
 	{
 		std::string tmp("");
 		std::ifstream in("/proc/meminfo");
@@ -154,8 +129,6 @@ namespace kki
 					, std::istream_iterator<std::string>()
 					, std::back_inserter(ramInf)
 					);
-				std::cout << tmp << std::endl;
-				std::cout << "size of free mem in Kb :" << ramInf[1] << std::endl;
 				break;
 			}
 		}
@@ -163,10 +136,10 @@ namespace kki
 		ULL_int val = std::stoi(ramInf[1]);
 		if(ramInf[2] == "kB")
 		{
-			std::cout << ramInf[2]  << std::endl;
 			val *= 1000;
+			std::cout << "RAM :" << val << " Byte"  << std::endl;
 		}
-		return val;
+		return val * k;
 	}
 
 	ULL_int FMan::detect_file_size(const std::string &name)
@@ -175,7 +148,7 @@ namespace kki
 		int val(-1);
 		if (file.is_open()) val = file.tellg();
 		file.close();
-		std::cout << "size of " << name << " is :" << val << std::endl;
+		std::cout << "size of " << name << " is :" << val << " Byte" << std::endl;
 		return val;
 	}
 
@@ -186,8 +159,8 @@ namespace kki
 		ULL_int sys_free_ram = detect_free_ram();
 		ULL_int buff_size = user_ram_limitation < sys_free_ram
 													 ? user_ram_limitation
-													 : sys_free_ram * 0.8;
-		std::cout << "buf_size is :" << buff_size << std::endl;
+													 : sys_free_ram;
+		std::cout << "buf_size is :" << buff_size << " Byte" << std::endl;
 		in2out(infile,outfile);
 		for(const auto& e :uFgen->getFlist())
 		{

@@ -185,4 +185,19 @@ namespace kki
 //	}
 //}
 
+//void FileController::addSortedFile(const std::string &fname, RAMBuff &rambuff)
+//	{
+//		std::ofstream out(fname);
+//		if(out.is_open()) fnames.push_back(fname);
+//		std::ostream_iterator<std::string> out_it (out,"\n");
+//		std::copy (rambuff.begin(), rambuff.end(), out_it);
+//		out.close();
+//	}
+//	void FileController::delFlist()
+//	{
+//		for(const auto& e :getFlist())
+//		{
+//			std::remove(e.c_str());
+//		}
+//	}
 };

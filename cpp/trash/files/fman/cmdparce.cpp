@@ -55,6 +55,7 @@ bool cmd::parse_cmd(int argc, char *arg[])
 			inFileName = cmd_line[1];
 			outFileName = cmd_line[2];
 			mem_limit = std::stoi(cmd_line[3]);
+			if(mem_limit == 0) mem_limit = dflim;
 			mem_limit = mem_limit < dflim ? mem_limit : dflim;
 			return true;
 		}
