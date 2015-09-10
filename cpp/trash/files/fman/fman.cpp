@@ -127,14 +127,17 @@ namespace kki
 
 	void FMan::indirect_sort()
 	{
-		//take mem info and some prediction
+		std::cout << "INDIRECT SORT:" << std::endl;
+		std::cout << "processing to split in TMP files ..." << std::endl;
 		split2tmp();
+		std::cout << "processing of sort TMP files ..." << std::endl;
+		sort_tmp();
+		std::cout << "processing of merge TMP files ..." << std::endl;
 		mergeTmpFiles();
-		uFgen->delFlist();
 	}
 
 
-	unsigned int FMan::detect_free_ram()
+	ULL_int FMan::detect_free_ram()
 	{
 		std::string tmp("");
 		std::ifstream in("/proc/meminfo");
@@ -157,7 +160,7 @@ namespace kki
 			}
 		}
 		in.close();
-		int val = std::stoi(ramInf[1]);
+		ULL_int val = std::stoi(ramInf[1]);
 		if(ramInf[2] == "kB")
 		{
 			std::cout << ramInf[2]  << std::endl;
@@ -166,7 +169,7 @@ namespace kki
 		return val;
 	}
 
-	unsigned int FMan::detect_file_size(const std::string &name)
+	ULL_int FMan::detect_file_size(const std::string &name)
 	{
 		std::ifstream file(name, std::ios::binary | std::ios::ate);
 		int val(-1);
@@ -180,20 +183,18 @@ namespace kki
 	void FMan::split2tmp()
 	{
 		int idx(0);
-		std::string ofName("out");
-		unsigned int sys_free_ram = detect_free_ram();
-		unsigned int buff_size = user_ram_limitation < sys_free_ram
+		ULL_int sys_free_ram = detect_free_ram();
+		ULL_int buff_size = user_ram_limitation < sys_free_ram
 													 ? user_ram_limitation
 													 : sys_free_ram * 0.8;
 		std::cout << "buf_size is :" << buff_size << std::endl;
-		//int user_limit_ram = user_ram_limitation;
-		in2out(infile,ofName);
+		in2out(infile,outfile);
 		for(const auto& e :uFgen->getFlist())
 		{
 			if(detect_file_size(e) < buff_size)
 				continue;
 			++idx;
-			in2out(e,ofName + std::to_string(idx));
+			in2out(e,outfile + std::to_string(idx));
 		}
 	}
 
@@ -225,7 +226,7 @@ namespace kki
 			}
 		}
 		else
-			std::cout << "ERR of open!!!" << std::endl;
+			std::cout << "ERROR: can't open file!" << std::endl;
 		in.close();
 		out1.close();
 		out2.close();
@@ -268,7 +269,7 @@ namespace kki
 	void FMan::mergeTmpFiles()
 	{
 		int idx(0);
-		std::string out_name("");
+		std::string out_name(outfile);
 		auto it1 = uFgen->getFlist().begin();
 		auto it2 = it1;
 		auto it_end = uFgen->getFlist().end();
@@ -279,11 +280,13 @@ namespace kki
 			)
 		{
 			++idx;
-			out_name = "out" + std::to_string(idx) + ".tmp";
+			out_name += std::to_string(idx);
 			merge2files(*it1,*it2,out_name);
 			++it1;
 			++it2;
 		}
+
+		std::rename(out_name.c_str(),outfile.c_str());
 	}
 
 };

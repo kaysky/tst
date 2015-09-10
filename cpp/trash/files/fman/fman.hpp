@@ -14,13 +14,14 @@
 #include <algorithm>
 #include <sstream>
 #include <utility>
+#include <stdexcept>
 
 namespace kki
 {
 
 	typedef std::list<std::string> FileNames;
 	typedef std::multiset<std::string> RAMBuff;
-
+	typedef unsigned long long int ULL_int;
 
 class FileController
 {
@@ -44,10 +45,10 @@ class FMan
 	std::string infile;
 	std::string outfile;
 	enum way {direct,split};
-	unsigned int user_ram_limitation;
+	ULL_int user_ram_limitation;
 public:
 	RAMBuff buff;
-	FMan(std::string fin, std::string fout, unsigned int limit)
+	FMan(std::string fin, std::string fout, ULL_int limit)
 		: uFgen(new FileController)
 		, infile(fin)
 		, outfile(fout)
@@ -59,8 +60,8 @@ public:
 	void sort_tmp();
 	void direct_sort();
 	void indirect_sort();
-	unsigned int detect_free_ram();
-	unsigned int detect_file_size(const std::string &name);
+	ULL_int detect_free_ram();
+	ULL_int detect_file_size(const std::string &name);
 	void split2tmp();
 	void split2double();
 	void in2out(const std::string &, const std::string &);

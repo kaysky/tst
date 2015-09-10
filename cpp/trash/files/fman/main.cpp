@@ -1,6 +1,7 @@
 #include <iostream>
 #include "fman.hpp"
 #include "randfilegen.hpp"
+#include "cmdparce.hpp"
 
 
 using namespace std;
@@ -12,27 +13,20 @@ int main(int argc, char *argv[])
 {
 	std::cout << "FMAN test:" << std::endl;
 
-	unsigned int limit = 1000000; // 1Mb
-	FMan fman("test.in","sortedOut.tmp", limit*50);
+	cmd parcer;
+	parcer.parse_cmd(argc,argv);
+//	parcer.show_cmd_line();
+	std::cout << "User's limit is :" << parcer.get_limit() << endl;
+
+//	unsigned int limit = 1000000; // 1Mb
+	FMan fman(parcer.get_fin(),parcer.get_fout(),parcer.get_limit());
 
 //	std::cout << "generate file" << std::endl;
 //	randFile file("test.in",1000000);
 //	file.gnFile();
 
-//	file.readFile();
-//	fman.direct_sort();
 
-//	string a("a");
-//	string b("b");
-//	string c("c");
-
-
-//	fman.merge2files(a,b,c);
-
-	fman.split2tmp();
-	fman.sort_tmp();
-	std::cout << "merging tmp files:" << std::endl;
-	fman.mergeTmpFiles();
+	fman.indirect_sort();
 
 	std::cout << "End of the test." << std::endl;
 	return 0;

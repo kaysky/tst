@@ -1,2 +1,2 @@
 all:
-	g++ main.cpp fman.cpp ftestman.cpp -o fman -std=c++11
+	g++ main.cpp fman.cpp ftestman.cpp cmdparce.cpp -o fman -std=c++11
