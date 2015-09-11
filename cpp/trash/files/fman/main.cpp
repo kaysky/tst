@@ -18,12 +18,13 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
+//	std::cout << "generate file" << std::endl;
+//	randFile file(parcer.get_fin(),210);
+//	file.gnFile();
+
 	FMan fman(parcer.get_fin(),parcer.get_fout(),parcer.get_limit());
 
 	fman.proceed_sort();
 
-//	std::cout << "generate file" << std::endl;
-//	randFile file("test.in",1000000);
-//	file.gnFile();
 	return 0;
 }

@@ -42,7 +42,7 @@ public:
 	{
 		std::ofstream out(fname);
 		int len(50);
-		int fileSize = 110 * 1000000; //first diget is Mb
+		int fileSize = sz * 1000000; //first diget is Mb
 		tmp = "";
 		if(out.is_open())
 		{
