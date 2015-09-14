@@ -23,6 +23,14 @@ namespace kki
 	typedef std::multiset<std::string> RAMBuff;
 	typedef unsigned long long int ULL_int;
 
+class mystring :public std::string
+{
+	friend std::istream& operator>>(std::istream &is, mystring &mystr)
+	{
+		return getline(is,mystr);
+	}
+};
+
 	/*
 	 * class defines methods to create and delete files
 	 * and keeps list of these files

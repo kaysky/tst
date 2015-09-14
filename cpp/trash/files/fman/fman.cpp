@@ -223,11 +223,11 @@ namespace kki
 			&& out.is_open()
 		  )
 		{
-			std::merge( std::istream_iterator<std::string>(in1)
-					  , std::istream_iterator<std::string>()
-					  , std::istream_iterator<std::string>(in2)
-					  , std::istream_iterator<std::string>()
-					  , std::ostream_iterator<std::string>(out,"\n")
+			std::merge( std::istream_iterator<mystring>(in1)
+					  , std::istream_iterator<mystring>()
+					  , std::istream_iterator<mystring>(in2)
+					  , std::istream_iterator<mystring>()
+					  , std::ostream_iterator<mystring>(out,"\n")
 					  );
 		}
 		uFgen->addFileName(outt);
