@@ -15,9 +15,9 @@ Dialog::~Dialog()
 
 void Dialog::paintEvent(QPaintEvent *event)
 {
-    QPainter painter(this);
+//    QPainter painter(this);
 //    QBrush br(QColor(120,40,120));
 //    QPen pen(br,Qt::SolidLine);
-    painter.drawLine(10,10,60,60);
+//    painter.drawLine(10,10,60,60);
 
 }
