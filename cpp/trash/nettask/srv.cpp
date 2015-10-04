@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
 
 	saddr.sin_family = AF_INET; //Internet Address Family
 	saddr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-	saddr.sin_port = htons(5004);
+	saddr.sin_port = htons(5555);
 
 	bind(sfd, (struct sockaddr*) &saddr,sizeof(saddr));
 	listen(sfd,1);

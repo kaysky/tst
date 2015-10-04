@@ -240,6 +240,9 @@
        </item>
        <item>
         <widget class="QLCDNumber" name="gotNumber">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
          <property name="font">
           <font>
            <pointsize>15</pointsize>
@@ -259,9 +262,12 @@
       </layout>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="btLink">
        <property name="text">
         <string>Connect</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -270,5 +276,25 @@
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>btLink</sender>
+   <signal>clicked()</signal>
+   <receiver>client_form</receiver>
+   <slot>btLink_slot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>149</x>
+     <y>204</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>149</x>
+     <y>112</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>btLink_slot()</slot>
+ </slots>
 </ui>
