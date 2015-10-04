@@ -22,12 +22,17 @@ struct id_info
 
 void cli_handler(id_info id)
 {
-	int cn;
+	int ret;
 	int number;
 
 	while(true)
 	{
-		cn = recv(id.nsfd,(void*)&number,sizeof(number),0);
+		ret = recv(id.nsfd,(void*)&number,sizeof(number),0);
+		if(0 == ret)
+		{
+			close(id.nsfd);
+			return;
+		}
 		number *= 2;
 		send(id.nsfd,(void*)&number,sizeof(number),0);
 	}
@@ -63,6 +68,7 @@ int main(int argc, char* argv[])
 		e.join();
 	}
 
+	close(sfd);
 	close(nsfd);
 	exit(0);
 }
