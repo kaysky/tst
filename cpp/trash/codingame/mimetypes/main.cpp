@@ -23,6 +23,19 @@ pair<string,string> parse_mime(const string& str)
 string parse_ext(const string& str)
 {
 	string tmp;
+	int q = count(str.begin(),str.end(),'.');
+	if(q >= 1)
+	{
+		tmp = str.substr(str.find_last_of('.')+1);
+	}
+	for_each(tmp.begin(), tmp.end(), [](char& in){ in = ::tolower(in); });
+	return tmp;
+}
+
+
+/*  string parse_ext(const string& str)
+{
+	string tmp;
 	size_t n = str.find('.');
 	if(n != string::npos)
 	{
@@ -30,7 +43,9 @@ string parse_ext(const string& str)
 		for_each(tmp.begin(), tmp.end(), [](char& in){ in = ::tolower(in);});
 	}
 	return tmp;
-}
+}*/
+
+
 
 int main(int argc, char *argv[])
 {
