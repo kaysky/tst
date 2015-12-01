@@ -1,0 +1,2 @@
+all:
+	g++   -O2 -g -DNDEBUG hello.C  -o hello.ttt  -L/home/konst/work/github/wt/build/src/http  -L/home/konst/work/github/wt/build/src -rdynamic /home/konst/work/github/wt/build/src/http/libwthttp.so.3.3.5 /home/konst/work/github/wt/build/src/libwt.so.3.3.5 -lboost_random -lboost_regex -lboost_signals -lrt -lz -lssl -lcrypto -lboost_thread -lboost_program_options -lboost_system -lboost_filesystem -lboost_date_time -lpthread -Wl,-rpath,/home/konst/work/github/wt/build/src/http:/home/konst/work/github/wt/build/src  
